@@ -45,8 +45,41 @@ export const signUp = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error!!" });
   }
 };
-export const logIn = (req, res) => {
-  res.send("Welcome to the LogIn Page");
+export const logIn = async(req, res) => {
+  const { Email, Password } = req.body;
+  try {
+    if (!Email || !Password) {
+      return res.status(400).json({ message: "All fields are required!!" });
+    }
+    const pool = getPool();
+    const [row] = await pool.query(`SELECT * FROM users WHERE email = ?`, [
+      Email,
+    ]);
+
+    console.log(row);
+    const user = row[0];
+    if (!user) {
+      return res.status(400).json({ message: "Inavlid Credentials" });
+    }
+    const isPassCorrect = await bcrypt.compare(Password, user.password);
+    if (!isPassCorrect) {
+      return res.status(400).json({ message: "Inavlid Credentials" });
+    }
+    gennToken(user.id, res);
+
+    return res.status(200).json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      address: user.address,
+      role: user.role,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    });
+  } catch (error) {
+    console.log("Error in the Login controller:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 export const logOut = (req, res) => {
   res.send("Welcome to the LogOut Page");
