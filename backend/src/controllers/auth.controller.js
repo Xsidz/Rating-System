@@ -82,7 +82,16 @@ export const logIn = async(req, res) => {
   }
 };
 export const logOut = (req, res) => {
-  res.send("Welcome to the LogOut Page");
+  try {
+    res.cookie("jwt", "", {
+      maxAge: 0,
+    });
+
+    return res.status(200).json({ message: "LoggedOut Successfully" });
+  } catch (error) {
+    console.log("Error in the log out controller : ", error.message);
+    return res.status(500).json({ message: " Internal Server Error" });
+  }
 };
 export const checkAuth = (req, res) => {
   res.send("Welcome to the checkAuth Page");
