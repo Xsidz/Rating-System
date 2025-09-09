@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { getPool } from "../utils/initDB.js";
 import { gennToken } from "../utils/lib.js";
+const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,16}$/;
 export const signUp = async (req, res) => {
   const { Name, Email, Password, Address } = req.body;
   try {
@@ -8,13 +9,12 @@ export const signUp = async (req, res) => {
     if (!Name || !Email || !Password || !Address) {
       return res.status(400).json({ message: "All fields are required !! " });
     }
-    if (Password.lenght < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password Length Should be atleast 6 Characters" });
-    }
-
-    // check for existing user
+    if (!passwordRegex.test(Password)) {
+      return res.status(400).json({
+      message:
+      "Password must be 8-16 characters, include at least one uppercase letter and one special character."
+  });
+}
     const pool = getPool();
     const [existingUser] = await pool.query(
       `SELECT * FROM users WHERE email = ?`,
