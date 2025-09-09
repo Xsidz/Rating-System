@@ -1,4 +1,4 @@
-import { getPool } from "../utils/initDB"
+import { getPool } from "../utils/initDB.js"
 import bcrypt from "bcryptjs";
 
 export const addUser= async (name, email,password,address,role)=>{
