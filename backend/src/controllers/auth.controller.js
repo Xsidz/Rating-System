@@ -119,6 +119,4 @@ export const updatePassword = async()=>{
         return res.status(500).json({message:"Internal Server Error"})
     }
 }
-export const checkAuth = (req, res) => {
-  res.send("Welcome to the checkAuth Page");
-};
+
