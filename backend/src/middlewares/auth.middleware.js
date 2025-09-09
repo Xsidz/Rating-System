@@ -1,4 +1,4 @@
-import { getPool } from "../utils/initDB";
+import { getPool } from "../utils/initDB.js";
 
 export const requireAuth = (role)=>{
     // checks if the user is logged in abd has a particular role
@@ -8,7 +8,7 @@ export const requireAuth = (role)=>{
         if(!token) return res.status(401).json({message :"Not logged in Please Log in!!"})
         
         try {
-            // check if cookie token is valid 
+            // get & check if cookie token is valid 
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             const pool = getPool()
             const [rows] = await pool.query(`SELECT id,name,email,role FROM users WHERE id = ?`,[decoded.userId])
