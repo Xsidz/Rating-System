@@ -1,6 +1,7 @@
 import { getPool } from "../utils/initDB.js";
+import jwt from "jsonwebtoken";
 
-export const requireAuth = (role)=>{
+export const requireAuth = (roles=[])=>{
     // checks if the user is logged in abd has a particular role
     return async (req,res,next) =>{
         console.log("Auth Middleware")
@@ -17,16 +18,18 @@ export const requireAuth = (role)=>{
                 return res.status(404).json({ message: "User not found" });
             }
 
-            if(role && rows[0].role != role){
-                return res.status(403).json({message : "Forbiddenn"})
+            if(roles.length && !roles.includes(rows[0].role)){
+                return res.status(403).json({message : "Forbidden"})
             }
 
             req.user = rows[0];
 
             console.log("AUth check Done !!")
+            next();
           
         } catch (error) {
-            
+            console.error("Auth Middleware Error:", error.message);
+      return res.status(401).json({ message: "Invalid or expired token" });
         }
     }
 }
