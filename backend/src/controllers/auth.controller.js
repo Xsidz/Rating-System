@@ -93,6 +93,32 @@ export const logOut = (req, res) => {
     return res.status(500).json({ message: " Internal Server Error" });
   }
 };
+
+export const updatePassword = async()=>{
+    const{currentPassword, newPassword} = req.body;
+
+    try {
+        const pool = getPool()
+        const [row] = await pool.query(`SELECT password FROM users WHERE id =?`,[req.user.id])
+        if(row.lenght == 0) return res.status(404).json({message : "User not Found!!"})
+        const user = row[0];
+        const passwordMatch = await bcrypt.compare(currentPassword,user.password)
+        if(!passwordMatch) return res.status(400).json({message : "Current password is incorrect!!"})
+        const salt = await bcrypt.genSalt(10);
+        const newHashed = await bcrypt.hash(newPassword,salt);
+
+        await pool.query(`UPDATE users SET paswword = ? WHERE id = ?`,[newHashed,req.user.id])
+
+        console.log("Password Updated");
+        res.clearCookie("jwt");
+
+        return res.status(200).json({message:"Password updated successfully. Please log in again"})
+
+    } catch (error) {
+        console.log("Error in the udpatePassword Controller : ", error.message)
+        return res.status(500).json({message:"Internal Server Error"})
+    }
+}
 export const checkAuth = (req, res) => {
   res.send("Welcome to the checkAuth Page");
 };
