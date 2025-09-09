@@ -19,7 +19,7 @@ export const addStore = async(name,email,address,owner_id = null )=>{
 }
 
 
-export const getDashboard = async ()=>{
+export const getDashboardStats = async ()=>{
     const pool = getPool();
 
     const [userCount] = await pool.query(`SELECT COUNT(*) AS totalUsers from users`)
