@@ -109,38 +109,54 @@ export const logOut = (req, res) => {
   }
 };
 
-export const updatePassword = async () => {
-  const { currentPassword, newPassword } = req.body;
-
+export const updatePassword = async (req, res) => {
   try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        message:
+          "Password must be 8-16 characters, include at least one uppercase letter and one special character."
+      });
+    }
+
     const pool = getPool();
-    const [row] = await pool.query(`SELECT password FROM users WHERE id =?`, [
+
+    
+    const [rows] = await pool.query(`SELECT password FROM users WHERE id = ?`, [
       req.user.id,
     ]);
-    if (row.lenght == 0)
+    if (rows.length === 0) {
       return res.status(404).json({ message: "User not Found!!" });
-    const user = row[0];
+    }
+
+    const user = rows[0];
+
+  
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!passwordMatch)
-      return res
-        .status(400)
-        .json({ message: "Current password is incorrect!!" });
+    if (!passwordMatch) {
+      return res.status(400).json({ message: "Current password is incorrect!!" });
+    }
+
+
     const salt = await bcrypt.genSalt(10);
     const newHashed = await bcrypt.hash(newPassword, salt);
 
-    await pool.query(`UPDATE users SET paswword = ? WHERE id = ?`, [
+    // Update DB
+    await pool.query(`UPDATE users SET password = ? WHERE id = ?`, [
       newHashed,
       req.user.id,
     ]);
 
     console.log("Password Updated");
-    res.clearCookie("jwt");
+    res.clearCookie("jwt"); 
 
-    return res
-      .status(200)
-      .json({ message: "Password updated successfully. Please log in again" });
+    return res.status(200).json({
+      message: "Password updated successfully. Please log in again",
+    });
   } catch (error) {
-    console.log("Error in the udpatePassword Controller : ", error.message);
+    console.log("Error in the updatePassword Controller: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
