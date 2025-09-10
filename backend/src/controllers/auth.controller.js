@@ -5,7 +5,7 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,16}$
 export const signUp = async (req, res) => {
   const { Name, Email, Password, Address } = req.body;
   try {
-    // validate values from imputs
+    
     if (!Name || !Email || !Password || !Address) {
       return res.status(400).json({ message: "All fields are required !! " });
     }
@@ -24,7 +24,7 @@ export const signUp = async (req, res) => {
       return res.status(400).json({ message: "User Already Exists" });
     }
 
-    //hash password
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(Password, salt);
 
@@ -40,7 +40,7 @@ export const signUp = async (req, res) => {
       [result.insertId]
     );
 
-    // geneerate jwt-token to start session
+    
     const newUser = rows[0];
     console.log(newUser.id);
 
@@ -55,7 +55,7 @@ export const signUp = async (req, res) => {
 export const logIn = async (req, res) => {
   const { Email, Password } = req.body;
   try {
-    //validate the fields
+    
     if (!Email || !Password) {
       return res.status(400).json({ message: "All fields are required!!" });
     }
@@ -69,7 +69,7 @@ export const logIn = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Inavlid Credentials" });
     }
-    //comapre the user entered and stored password
+    
     const isPassCorrect = await bcrypt.compare(Password, user.password);
     if (!isPassCorrect) {
       return res.status(400).json({ message: "Inavlid Credentials" });
@@ -142,7 +142,7 @@ export const updatePassword = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const newHashed = await bcrypt.hash(newPassword, salt);
 
-    // Update DB
+    
     await pool.query(`UPDATE users SET password = ? WHERE id = ?`, [
       newHashed,
       req.user.id,

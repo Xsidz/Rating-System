@@ -25,7 +25,7 @@ export const getAllStores = async (filters = {}) => {
   `;
   const values = [];
 
-  // Apply filters before aggregation
+  
   if (filters.name) {
     baseQuery += " AND s.name LIKE ?";
     values.push(`%${filters.name}%`);
@@ -36,10 +36,10 @@ export const getAllStores = async (filters = {}) => {
     values.push(`%${filters.address}%`);
   }
 
-  // Group for AVG aggregation
+  
   baseQuery += " GROUP BY s.id";
 
-  // Apply rating filter after aggregation
+  
   if (filters.minRating) {
     baseQuery += " HAVING avgRating >= ?";
     values.push(filters.minRating);

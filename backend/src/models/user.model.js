@@ -19,7 +19,7 @@ export const getAllUsers = async (filters = {}) => {
   let baseQuery = `SELECT id, name, email, address, role FROM users WHERE 1=1`;
   const values = [];
 
-  // add queries conditionally to filter accordingly
+  
   if (filters.name) {
     baseQuery += " AND name LIKE ?";
     values.push(`%${filters.name}%`);
@@ -37,7 +37,7 @@ export const getAllUsers = async (filters = {}) => {
     values.push(filters.role);
   }
 
-  // we add the conditional query and values to perform query
+  
   const [rows] = await pool.query(baseQuery, values);
   return rows;
 };
@@ -54,7 +54,7 @@ export const getUserDetails = async (userId) => {
 
   const user = rows[0];
 
-  // If user is owner then show rating also
+  
   if (user.role === "store_owner") {
     const [[storeData]] = await pool.query(
       `

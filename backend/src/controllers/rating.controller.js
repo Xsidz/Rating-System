@@ -5,7 +5,7 @@ import * as storeModel from "../models/store.model.js";
 export const createRating = async (req, res) => {
   try {
     const { store_id, rating } = req.body;
-    const user_id = req.user.id; // from auth middleware
+    const user_id = req.user.id; 
 
     if (!store_id || !rating) {
       return res.status(400).json({ message: "store_id and rating are required" });
