@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoute from "./route/auth.route.js";
 import adminRoute from "./route/user.route.js"
+import storeRoutes from "./route/store.route.js"
 import { connectDB } from "./utils/connectDB.js";
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(
 
 app.use("/auth", authRoute);
 app.use("/api/users", adminRoute)
+app.use("/",storeRoutes)
 
 app.listen(PORT, (req, res) => {
   console.log("Server active on Port" + " " + PORT);
