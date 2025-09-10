@@ -2,15 +2,6 @@ import * as userModel from "../models/user.model.js";
 const passwordRegex =
   /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,16}$/;
 
-export const getDashboard = async (req, res) => {
-  try {
-    const stats = await userModel.getDashboardStats();
-    res.status(200).json(stats);
-  } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
-    res.status(500).json({ message: "Failed to fetch dashboard stats" });
-  }
-};
 
 export const addUser = async (req, res) => {
   try {
