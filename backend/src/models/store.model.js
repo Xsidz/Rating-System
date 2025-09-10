@@ -56,3 +56,12 @@ export const getAllStores = async (filters = {}) => {
   const [rows] = await pool.query(baseQuery, values);
   return rows;
 };
+
+export const getStoreById = async (id) => {
+  const pool = getPool();
+  const [rows] = await pool.query(
+    "SELECT id, name, email, address, owner_id FROM stores WHERE id = ?",
+    [id]
+  );
+  return rows[0] || null;
+};

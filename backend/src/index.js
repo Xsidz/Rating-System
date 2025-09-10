@@ -6,6 +6,7 @@ import authRoute from "./route/auth.route.js";
 import adminRoute from "./route/user.route.js"
 import storeRoutes from "./route/store.route.js"
 import { connectDB } from "./utils/connectDB.js";
+import ratingRoutes from "./route/rating.route.js";
 
 dotenv.config();
 const app = express();
@@ -26,6 +27,7 @@ app.use(
 app.use("/auth", authRoute);
 app.use("/api/users", adminRoute)
 app.use("/",storeRoutes)
+app.use("/api/ratings", ratingRoutes);
 
 app.listen(PORT, (req, res) => {
   console.log("Server active on Port" + " " + PORT);
