@@ -1,10 +1,10 @@
-import * as adminModel from "../models/user.model.js";
+import * as userModel from "../models/user.model.js";
 const passwordRegex =
   /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,16}$/;
 
 export const getDashboard = async (req, res) => {
   try {
-    const stats = await adminModel.getDashboardStats();
+    const stats = await userModel.getDashboardStats();
     res.status(200).json(stats);
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);
@@ -28,7 +28,7 @@ export const addUser = async (req, res) => {
       });
     }
 
-    const newUser = await adminModel.addUser(name, email, password, address, role);
+    const newUser = await userModel.addUser(name, email, password, address, role);
     console.log(newUser)
     return res.status(201).json({message : "New User Created Successfully !!"})
   } catch (error) {
@@ -43,7 +43,7 @@ export const addUser = async (req, res) => {
 export const getAllUsers = async (req, res) => {
   try {
     const { name, email, address, role } = req.query;
-    const users = await adminModel.getAllUsers({ name, email, address, role });
+    const users = await userModel.getAllUsers({ name, email, address, role });
     res.json(users);
   } catch (error) {
     console.error("Error in getAllusers Conroller:", error);
@@ -54,7 +54,7 @@ export const getAllUsers = async (req, res) => {
 export const getUserDetails = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await adminModel.getUserDetails(id);
+    const user = await userModel.getUserDetails(id);
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
