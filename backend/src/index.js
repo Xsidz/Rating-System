@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoute from "./route/auth.route.js";
-import adminRoute from "./route/admin.route.js"
+import adminRoute from "./route/user.route.js"
 import { connectDB } from "./utils/connectDB.js";
 
 dotenv.config();
@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:5500",
     methods: "GET, POST, PUT, DELETE, OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
     credentials: true,
@@ -23,7 +23,7 @@ app.use(
 );
 
 app.use("/auth", authRoute);
-app.use("/admin", adminRoute)
+app.use("/api/users", adminRoute)
 
 app.listen(PORT, (req, res) => {
   console.log("Server active on Port" + " " + PORT);
