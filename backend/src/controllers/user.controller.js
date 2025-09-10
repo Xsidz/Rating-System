@@ -1,4 +1,4 @@
-import * as adminModel from "../models/admin.model.js";
+import * as adminModel from "../models/user.model.js";
 const passwordRegex =
   /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,16}$/;
 
