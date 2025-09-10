@@ -1,4 +1,5 @@
-import { getPool } from "../config/db.js";
+import { getPool } from "../utils/initDB.js";
+
 
 
 export const addRating = async (user_id, store_id, rating) => {
