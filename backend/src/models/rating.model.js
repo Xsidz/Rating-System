@@ -34,3 +34,14 @@ export const getStoreRatings = async (store_id) => {
   );
   return rows;
 };
+
+export const getStoreAverageRating = async (storeId) => {
+  const pool = getPool();
+  const [rows] = await pool.query(
+    `SELECT COALESCE(AVG(rating), 0) AS avgRating
+     FROM ratings
+     WHERE store_id = ?`,
+    [storeId]
+  );
+  return rows[0].avgRating;
+};
