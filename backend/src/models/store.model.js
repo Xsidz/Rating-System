@@ -5,7 +5,7 @@ export const addStore = async ({name, email, address, owner_id = null}) => {
 
   const [result] = await pool.query(
     `INSERT INTO stores(name, email, address, owner_id) VALUES (?, ?, ?, ?)`,
-    [name, email, address, owner_id]  // ✅ array, in the correct order
+    [name, email, address, owner_id]  
   );
 
   return result.insertId;
