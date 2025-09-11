@@ -1,11 +1,11 @@
 import { getPool } from "../utils/initDB.js";
 
-export const addStore = async ({name, email, address, owner_id = null}) => {
+export const addStore = async ({ name, email, address, owner_id = null }) => {
   const pool = getPool();
 
   const [result] = await pool.query(
     `INSERT INTO stores(name, email, address, owner_id) VALUES (?, ?, ?, ?)`,
-    [name, email, address, owner_id]  
+    [name, email, address, owner_id]
   );
 
   return result.insertId;
@@ -17,15 +17,16 @@ export const addStore = async ({name, email, address, owner_id = null}) => {
 export const getAllStores = async (filters = {}) => {
   const pool = getPool();
   let baseQuery = `
-    SELECT s.id, s.name, s.owner_id , s.address, 
-           COALESCE(AVG(r.rating), 0) AS avgRating
+    SELECT s.id, s.name, s.email, s.owner_id, s.address, 
+           COALESCE(AVG(r.rating), 0) AS avgRating,
+           COUNT(r.id) AS totalRatings
     FROM stores s
     LEFT JOIN ratings r ON s.id = r.store_id
     WHERE 1=1
   `;
   const values = [];
 
-  
+
   if (filters.name) {
     baseQuery += " AND s.name LIKE ?";
     values.push(`%${filters.name}%`);
@@ -36,10 +37,10 @@ export const getAllStores = async (filters = {}) => {
     values.push(`%${filters.address}%`);
   }
 
-  
+
   baseQuery += " GROUP BY s.id";
 
-  
+
   if (filters.minRating) {
     baseQuery += " HAVING avgRating >= ?";
     values.push(filters.minRating);
