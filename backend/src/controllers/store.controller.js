@@ -3,12 +3,12 @@ export const addStore = async (req, res) => {
   try {
     const { name, email, address, owner_id } = req.body;
     if (!name || !email || !address || !owner_id) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "Name, email, address, and owner are required" });
     }
 
     const newStore = await storeModel.addStore({ name, email, address, owner_id });
     console.log(newStore)
-    res.status(201).json({message : "New Store added Successfuly !!"});
+    res.status(201).json({ message: "New Store added Successfuly !!" });
   } catch (error) {
     console.error("Error in addStore:", error);
     res.status(500).json({ message: "Failed to add store" });

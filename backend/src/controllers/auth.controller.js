@@ -53,15 +53,15 @@ export const signUp = async (req, res) => {
   }
 };
 export const logIn = async (req, res) => {
-  const { Email, Password } = req.body;
+  const { email, password } = req.body;
   try {
     
-    if (!Email || !Password) {
+    if (!email || !password) {
       return res.status(400).json({ message: "All fields are required!!" });
     }
     const pool = getPool();
     const [row] = await pool.query(`SELECT * FROM users WHERE email = ?`, [
-      Email,
+      email,
     ]);
 
     console.log(row);
@@ -70,7 +70,7 @@ export const logIn = async (req, res) => {
       return res.status(400).json({ message: "Inavlid Credentials" });
     }
     
-    const isPassCorrect = await bcrypt.compare(Password, user.password);
+    const isPassCorrect = await bcrypt.compare(password, user.password);
     if (!isPassCorrect) {
       return res.status(400).json({ message: "Inavlid Credentials" });
     }
@@ -160,3 +160,12 @@ export const updatePassword = async (req, res) => {
   }
 };
 
+
+export const checkAuth = (req,res)=>{
+  try {
+    res.status(200).json(req.user)
+  } catch (error) {
+    console.log("Error in the CheckAuth controller :", error.message)
+    res.status(500).json({message : "Internal Server Error"})
+  }
+}
