@@ -14,24 +14,24 @@ const SignupPage = () => {
     email: '',
     password: '',
     address: '',
-    role: 'user' // Default role for all new signups
+    role: 'user' 
   });
   const [errors, setErrors] = useState({});
 
-  // Validation functions using the validation utilities
+ 
 
-  // Handle input changes
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
+
+  
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
-  // Validate form
+        
   const validateForm = () => {
     const newErrors = {};
 
@@ -51,50 +51,52 @@ const SignupPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
+  
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
-        // Use the auth store signup function
+        
         const user = await signup({
           Name: formData.name,
           Email: formData.email,
           Password: formData.password,
           Address: formData.address
-          // Note: role is not sent as backend defaults to 'user'
+          
         });
 
         console.log('Signup successful:', user);
         alert('Account created successfully! You are now logged in.');
+
         
-        // Redirect to appropriate dashboard based on role
-        // Since new signups are always 'user' role, redirect to user dashboard
-        navigate('/user-dashboard');
         
+        navigate('/dashboard');
+
       } catch (error) {
         console.error('Signup error:', error);
-        // Error is already handled by the auth store
+        
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        {/* Header */}
+
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
-            <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="mx-auto h-16 w-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
-          <p className="mt-2 text-gray-600">Join the Rating System community</p>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            Create your account
+          </h2>
+          <p className="mt-3 text-gray-600 text-lg">Join the Rating System community</p>
         </div>
 
-        <Card className="mt-8">
+        <Card gradient shadow="lg" className="mt-8">
           <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            {/* Name Field */}
+            
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
@@ -121,7 +123,7 @@ const SignupPage = () => {
               </div>
             </div>
 
-            {/* Email Field */}
+            
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email address
@@ -142,7 +144,7 @@ const SignupPage = () => {
               )}
             </div>
 
-            {/* Password Field */}
+            
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
@@ -179,7 +181,7 @@ const SignupPage = () => {
               </p>
             </div>
 
-            {/* Address Field */}
+            
             <div>
               <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                 Address
@@ -204,7 +206,7 @@ const SignupPage = () => {
               </div>
             </div>
 
-            {/* Terms and Conditions */}
+            
             <div className="flex items-start">
               <input
                 id="terms"
@@ -230,12 +232,12 @@ const SignupPage = () => {
               </label>
             </div>
 
-            {/* Auth Error */}
+            
             {error && (
               <ErrorMessage message={error} />
             )}
 
-            {/* Submit Button */}
+            
             <div>
               <Button
                 type="button"
@@ -249,7 +251,7 @@ const SignupPage = () => {
               </Button>
             </div>
 
-            {/* Sign In Link */}
+            
             <div className="text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
