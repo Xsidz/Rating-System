@@ -70,6 +70,12 @@ const LoginPage = () => {
     }
   };
 
+  
+  const handleDemoCredentialClick = (email, password) => {
+    setFormData({ email, password });
+    setErrors({});
+  };
+
  
   const validateForm = () => {
     const newErrors = {};
@@ -120,7 +126,40 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+
+    
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative">
+      {/* Demo Credentials - Bottom Left */}
+      <div className="absolute bottom-4 left-4 z-10">
+        <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 p-3 max-w-xs">
+          <h4 className="text-xs font-semibold text-gray-700 mb-2">Demo Accounts</h4>
+          <div className="space-y-1 text-xs">
+            <div 
+              className="flex justify-between items-center p-1.5 bg-gray-50 rounded cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => handleDemoCredentialClick('Roxiller@admin.com', 'Roxiller@2025')}
+            >
+              <span className="font-medium text-gray-600">Admin:</span>
+              <span className="text-gray-500 text-xs">Roxiller@admin.com</span>
+            </div>
+            <div 
+              className="flex justify-between items-center p-1.5 bg-gray-50 rounded cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => handleDemoCredentialClick('Roxiller@store_Owner.com', 'Roxiller@2025')}
+            >
+              <span className="font-medium text-gray-600">Owner:</span>
+              <span className="text-gray-500 text-xs">Roxiller@store_Owner.com</span>
+            </div>
+            <div 
+              className="flex justify-between items-center p-1.5 bg-gray-50 rounded cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => handleDemoCredentialClick('Roxiller@user.com', 'Roxiller@2025')}
+            >
+              <span className="font-medium text-gray-600">User:</span>
+              <span className="text-gray-500 text-xs">Roxiller@user.com</span>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Click to auto-fill</p>
+        </div>
+      </div>
+
       <div className="max-w-md w-full space-y-8">
        
         <div className="text-center">
