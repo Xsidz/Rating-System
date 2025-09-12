@@ -8,7 +8,7 @@
     "dev" : "nodemon src/index.js"
   },
   "type": "module",
-  "author": "Siddhesh Kabra",
+  "author": "$iddhesh Kabra",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",

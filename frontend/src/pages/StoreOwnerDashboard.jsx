@@ -235,7 +235,7 @@ const StoreOwnerDashboard = () => {
         </Card>
       </div>
 
-      {/* Rating Distribution */}
+      {/* Rating Distribution Rating wise &$id*/}
       <div className="mb-6">
         <Card>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Rating Distribution</h3>
