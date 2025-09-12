@@ -16,30 +16,51 @@ export const addUser = async (name, email, password, address, role) => {
 
 export const getAllUsers = async (filters = {}) => {
   const pool = getPool();
-  let baseQuery = `SELECT id, name, email, address, role FROM users WHERE 1=1`;
+  let baseQuery = `
+    SELECT u.id, u.name, u.email, u.address, u.role,
+           CASE 
+             WHEN u.role = 'store_owner' THEN COALESCE(AVG(r.rating), 0)
+             ELSE NULL
+           END AS averageRating,
+           CASE 
+             WHEN u.role = 'store_owner' THEN COUNT(r.id)
+             ELSE NULL
+           END AS totalRatings
+    FROM users u
+    LEFT JOIN stores s ON u.id = s.owner_id AND u.role = 'store_owner'
+    LEFT JOIN ratings r ON s.id = r.store_id
+    WHERE 1=1
+  `;
   const values = [];
 
-  
+
   if (filters.name) {
-    baseQuery += " AND name LIKE ?";
+    baseQuery += " AND u.name LIKE ?";
     values.push(`%${filters.name}%`);
   }
   if (filters.email) {
-    baseQuery += " AND email LIKE ?";
+    baseQuery += " AND u.email LIKE ?";
     values.push(`%${filters.email}%`);
   }
   if (filters.address) {
-    baseQuery += " AND address LIKE ?";
+    baseQuery += " AND u.address LIKE ?";
     values.push(`%${filters.address}%`);
   }
   if (filters.role) {
-    baseQuery += " AND role = ?";
+    baseQuery += " AND u.role = ?";
     values.push(filters.role);
   }
 
-  
+  baseQuery += " GROUP BY u.id, u.name, u.email, u.address, u.role";
+
   const [rows] = await pool.query(baseQuery, values);
-  return rows;
+
+  
+  return rows.map(user => ({
+    ...user,
+    averageRating: user.averageRating ? parseFloat(user.averageRating) : null,
+    totalRatings: user.totalRatings ? parseInt(user.totalRatings) : null
+  }));
 };
 
 export const getUserDetails = async (userId) => {
@@ -54,7 +75,7 @@ export const getUserDetails = async (userId) => {
 
   const user = rows[0];
 
-  
+
   if (user.role === "store_owner") {
     const [[storeData]] = await pool.query(
       `

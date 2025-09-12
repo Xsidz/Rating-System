@@ -45,3 +45,16 @@ export const getStoreAverageRating = async (storeId) => {
   );
   return rows[0].avgRating;
 };
+
+export const getUserRatings = async (user_id) => {
+  const pool = getPool();
+  const [rows] = await pool.query(
+    `SELECT r.id, r.store_id, r.rating, r.created_at, r.updated_at,
+            s.name AS store_name, s.address AS store_address
+     FROM ratings r
+     JOIN stores s ON r.store_id = s.id
+     WHERE r.user_id = ?`,
+    [user_id]
+  );
+  return rows;
+};

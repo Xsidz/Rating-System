@@ -5,7 +5,7 @@ import * as storeModel from "../models/store.model.js";
 export const createRating = async (req, res) => {
   try {
     const { store_id, rating } = req.body;
-    const user_id = req.user.id; 
+    const user_id = req.user.id;
 
     if (!store_id || !rating) {
       return res.status(400).json({ message: "store_id and rating are required" });
@@ -56,23 +56,35 @@ export const storeRatings = async (req, res) => {
   try {
     const { id: storeId } = req.params;
 
-    
+
     const store = await storeModel.getStoreById(storeId);
     if (!store) {
       return res.status(404).json({ message: "Store not found" });
     }
 
-    
+
     if (store.owner_id !== req.user.id) {
       return res.status(403).json({ message: "You are not the owner of this store" });
     }
 
-    
+
     const ratings = await ratingModel.getStoreRatings(storeId);
 
     res.json({ storeId, ratings });
   } catch (error) {
     console.error("Error fetching store ratings:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const getUserRatings = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+    const ratings = await ratingModel.getUserRatings(user_id);
+    res.json({ ratings });
+  } catch (error) {
+    console.error("Error fetching user ratings:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
