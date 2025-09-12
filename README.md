@@ -50,7 +50,7 @@ Backend (Express on port 5500)
 cd backend
 npm run dev
 ```
-This starts the API and connects to MySQL. On first run it creates the schema and tables.
+This starts the API and connects to MySQL. On first run it creates the schema, tables, and default demo data.
 
 Frontend (Vite on port 5173)
 ```
@@ -63,9 +63,24 @@ Open the printed URL (usually `http://localhost:5173`).
 - Axios base URL: `frontend/src/lib/axios.js` defaults to `http://localhost:5500/` and `withCredentials: true`.
 - Routing and protected routes are configured in `frontend/src/App.jsx` and `frontend/src/components/ProtectedRoute.jsx`.
 
+### Default Demo Data
+On first run, the system automatically creates:
+
+**Default Users:**
+- **User**: `Roxiller@user.com` / `Roxiller@2025`
+- **Store Owner**: `Roxiller@store_Owner.com` / `Roxiller@2025`
+- **Admin**: `Roxiller@admin.com` / `Roxiller@2025`
+
+**Default Store:**
+- **Name**: "Roxiller Systems Store"
+- **Email**: `Roxiller@store.com`
+- **Owner**: Roxiller Systems Store Owner
+- **Address**: VCC Vantage 9, Pashan Hwy Side Rd, Baner, Pune, Maharashtra 411069
+
+
 ### Auth & Roles
 - Signup creates users with role `user` by default.
-- To promote a user to `admin` or `store_owner`, update the `users.role` column manually in MySQL for now.
+- Default demo accounts are ready to use immediately for testing all features.
 
 ### Key Scripts
 - Backend: `npm run dev` (nodemon)
