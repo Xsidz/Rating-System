@@ -12,7 +12,7 @@ export const addStore = async (req, res) => {
 
     const newStore = await storeModel.addStore({ name, email, address, owner_id });
     console.log(newStore);
-    res.status(201).json({ message: "New Store added Successfuly !!" });
+    res.status(201).json({ message: "New Store added Successfully !!" });
   } catch (error) {
     return handleError(res, error, "addStore controller");
   }

@@ -69,11 +69,11 @@ export const logIn = async (req, res) => {
     console.log(row);
     const user = row[0];
     if (!user) {
-      return res.status(400).json({ message: "Inavlid Credentials" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
     const isPassCorrect = await comparePassword(password, user.password);
     if (!isPassCorrect) {
-      return res.status(400).json({ message: "Inavlid Credentials" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
     gennToken(user.id, res);
 
