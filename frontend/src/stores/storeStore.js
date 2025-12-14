@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
+import { handleStoreError, applyFilters } from '../utils/storeHelpers.js';
 
 // Store  for managing store data and operations
 const useStoreStore = create((set, get) => ({
@@ -31,7 +32,7 @@ const useStoreStore = create((set, get) => ({
       });
       return stores;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to fetch stores';
+      const errorMessage = handleStoreError(error, 'Failed to fetch stores');
       set({
         stores: [],
         loading: false,
@@ -55,7 +56,7 @@ const useStoreStore = create((set, get) => ({
 
       return response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to create store';
+      const errorMessage = handleStoreError(error, 'Failed to create store');
       set({ loading: false, error: errorMessage });
       throw error;
     }
@@ -81,23 +82,9 @@ const useStoreStore = create((set, get) => ({
     filters: { name: '', email: '', address: '', role: '' }
   }),
 
-  
   getFilteredStores: () => {
     const { stores, searchTerm, filters } = get();
-    return stores.filter(store => {
-      const matchesSearch = !searchTerm ||
-        store.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        store.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        store.email?.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesFilters =
-        (!filters.name || store.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
-        (!filters.email || store.email?.toLowerCase().includes(filters.email.toLowerCase())) &&
-        (!filters.address || store.address?.toLowerCase().includes(filters.address.toLowerCase())) &&
-        (!filters.role || store.role === filters.role);
-
-      return matchesSearch && matchesFilters;
-    });
+    return applyFilters(stores, searchTerm, filters, ['name', 'address', 'email']);
   },
 
   

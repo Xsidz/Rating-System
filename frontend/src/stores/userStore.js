@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
+import { handleStoreError, applyFilters } from '../utils/storeHelpers.js';
 
 
 const useUserStore = create((set, get) => ({
@@ -26,7 +27,7 @@ const useUserStore = create((set, get) => ({
       });
       return response.data.users || response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to fetch users';
+      const errorMessage = handleStoreError(error, 'Failed to fetch users');
       set({
         users: [],
         loading: false,
@@ -45,7 +46,7 @@ const useUserStore = create((set, get) => ({
       set({ loading: false, error: null });
       return user;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to fetch user details';
+      const errorMessage = handleStoreError(error, 'Failed to fetch user details');
       set({ loading: false, error: errorMessage });
       throw error;
     }
@@ -65,7 +66,7 @@ const useUserStore = create((set, get) => ({
 
       return response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to create user';
+      const errorMessage = handleStoreError(error, 'Failed to create user');
       set({ loading: false, error: errorMessage });
       throw error;
     }
@@ -85,23 +86,9 @@ const useUserStore = create((set, get) => ({
     filters: { role: '', name: '', email: '', address: '' }
   }),
 
-  
   getFilteredUsers: () => {
     const { users, searchTerm, filters } = get();
-    return users.filter(user => {
-      const matchesSearch = !searchTerm ||
-        user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.address?.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesFilters =
-        (!filters.role || user.role === filters.role) &&
-        (!filters.name || user.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
-        (!filters.email || user.email?.toLowerCase().includes(filters.email.toLowerCase())) &&
-        (!filters.address || user.address?.toLowerCase().includes(filters.address.toLowerCase()));
-
-      return matchesSearch && matchesFilters;
-    });
+    return applyFilters(users, searchTerm, filters, ['name', 'email', 'address']);
   },
 
  

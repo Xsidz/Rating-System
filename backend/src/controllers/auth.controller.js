@@ -1,7 +1,15 @@
-import bcrypt from "bcryptjs";
 import { getPool } from "../utils/initDB.js";
 import { gennToken } from "../utils/lib.js";
-const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,16}$/;
+import {
+  validatePassword,
+  hashPassword,
+  comparePassword,
+  PASSWORD_VALIDATION_MESSAGE,
+} from "../utils/passwordUtils.js";
+import {
+  handleError,
+  handleValidationError,
+} from "../utils/errorHandler.js";
 export const signUp = async (req, res) => {
   const { Name, Email, Password, Address } = req.body;
   try {
@@ -9,12 +17,9 @@ export const signUp = async (req, res) => {
     if (!Name || !Email || !Password || !Address) {
       return res.status(400).json({ message: "All fields are required !! " });
     }
-    if (!passwordRegex.test(Password)) {
-      return res.status(400).json({
-      message:
-      "Password must be 8-16 characters, include at least one uppercase letter and one special character."
-  });
-}
+    if (!validatePassword(Password)) {
+      return handleValidationError(res, PASSWORD_VALIDATION_MESSAGE);
+    }
     const pool = getPool();
     const [existingUser] = await pool.query(
       `SELECT * FROM users WHERE email = ?`,
@@ -24,9 +29,7 @@ export const signUp = async (req, res) => {
       return res.status(400).json({ message: "User Already Exists" });
     }
 
-    
-    const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(Password, salt);
+    const hashedPass = await hashPassword(Password);
 
     const [result] = await pool.query(
       `INSERT INTO users(name, email,password,address,role) VALUES(?,?,?,?,'user')`,
@@ -48,8 +51,7 @@ export const signUp = async (req, res) => {
 
     return res.status(200).json(newUser);
   } catch (error) {
-    console.log("Error in the Signup controller :", error.message);
-    return res.status(500).json({ message: "Internal Server Error!!" });
+    return handleError(res, error, "Signup controller");
   }
 };
 export const logIn = async (req, res) => {
@@ -67,12 +69,11 @@ export const logIn = async (req, res) => {
     console.log(row);
     const user = row[0];
     if (!user) {
-      return res.status(400).json({ message: "Inavlid Credentials" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
-    
-    const isPassCorrect = await bcrypt.compare(password, user.password);
+    const isPassCorrect = await comparePassword(password, user.password);
     if (!isPassCorrect) {
-      return res.status(400).json({ message: "Inavlid Credentials" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
     gennToken(user.id, res);
 
@@ -86,8 +87,7 @@ export const logIn = async (req, res) => {
       updated_at: user.updated_at,
     });
   } catch (error) {
-    console.log("Error in the Login controller:", error.message);
-    return res.status(500).json({ message: "Internal server error" });
+    return handleError(res, error, "Login controller");
   }
 };
 export const logOut = (req, res) => {
@@ -104,8 +104,7 @@ export const logOut = (req, res) => {
 
     return res.status(200).json({ message: "LoggedOut Successfully" });
   } catch (error) {
-    console.log("Error in the log out controller : ", error.message);
-    return res.status(500).json({ message: " Internal Server Error" });
+    return handleError(res, error, "Logout controller");
   }
 };
 
@@ -113,11 +112,8 @@ export const updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
-    if (!passwordRegex.test(newPassword)) {
-      return res.status(400).json({
-        message:
-          "Password must be 8-16 characters, include at least one uppercase letter and one special character."
-      });
+    if (!validatePassword(newPassword)) {
+      return handleValidationError(res, PASSWORD_VALIDATION_MESSAGE);
     }
 
     const pool = getPool();
@@ -132,15 +128,12 @@ export const updatePassword = async (req, res) => {
 
     const user = rows[0];
 
-  
-    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    const passwordMatch = await comparePassword(currentPassword, user.password);
     if (!passwordMatch) {
       return res.status(400).json({ message: "Current password is incorrect!!" });
     }
 
-
-    const salt = await bcrypt.genSalt(10);
-    const newHashed = await bcrypt.hash(newPassword, salt);
+    const newHashed = await hashPassword(newPassword);
 
     
     await pool.query(`UPDATE users SET password = ? WHERE id = ?`, [
@@ -155,17 +148,15 @@ export const updatePassword = async (req, res) => {
       message: "Password updated successfully. Please log in again",
     });
   } catch (error) {
-    console.log("Error in the updatePassword Controller: ", error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return handleError(res, error, "updatePassword Controller");
   }
 };
 
 
-export const checkAuth = (req,res)=>{
+export const checkAuth = (req, res) => {
   try {
-    res.status(200).json(req.user)
+    res.status(200).json(req.user);
   } catch (error) {
-    console.log("Error in the CheckAuth controller :", error.message)
-    res.status(500).json({message : "Internal Server Error"})
+    return handleError(res, error, "CheckAuth controller");
   }
-}
+};

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
+import { handleStoreError } from '../utils/storeHelpers.js';
 
 
 const useRatingStore = create((set, get) => ({
@@ -30,7 +31,7 @@ const useRatingStore = create((set, get) => ({
       set({ loading: false, error: null });
       return newRating;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to submit rating';
+      const errorMessage = handleStoreError(error, 'Failed to submit rating');
       set({ loading: false, error: errorMessage });
       throw error;
     }
@@ -65,7 +66,7 @@ const useRatingStore = create((set, get) => ({
       set({ loading: false, error: null });
       return response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to update rating';
+      const errorMessage = handleStoreError(error, 'Failed to update rating');
       set({ loading: false, error: errorMessage });
       throw error;
     }
@@ -83,7 +84,7 @@ const useRatingStore = create((set, get) => ({
       });
       return response.data.ratings || response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to fetch store ratings';
+      const errorMessage = handleStoreError(error, 'Failed to fetch store ratings');
       set({
         storeRatings: [],
         loading: false,
@@ -112,7 +113,7 @@ const useRatingStore = create((set, get) => ({
       });
       return response.data.ratings || response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to fetch user ratings';
+      const errorMessage = handleStoreError(error, 'Failed to fetch user ratings');
       set({
         userRatings: [],
         loading: false,

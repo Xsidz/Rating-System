@@ -1,6 +1,13 @@
 import * as userModel from "../models/user.model.js";
-const passwordRegex =
-  /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,16}$/;
+import {
+  validatePassword,
+  PASSWORD_VALIDATION_MESSAGE,
+} from "../utils/passwordUtils.js";
+import {
+  handleError,
+  handleValidationError,
+  handleNotFoundError,
+} from "../utils/errorHandler.js";
 
 
 export const addUser = async (req, res) => {
@@ -12,19 +19,15 @@ export const addUser = async (req, res) => {
         .json({ message: "All required fields must be provided" });
     }
 
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({
-        message:
-          "Password must be 8-16 characters, include at least one uppercase letter and one special character.",
-      });
+    if (!validatePassword(password)) {
+      return handleValidationError(res, PASSWORD_VALIDATION_MESSAGE);
     }
 
     const newUser = await userModel.addUser(name, email, password, address, role);
-    console.log(newUser)
-    return res.status(201).json({message : "New User Created Successfully !!"})
+    console.log(newUser);
+    return res.status(201).json({ message: "New User Created Successfully !!" });
   } catch (error) {
-    console.error("Error in addUser controller:", error);
-    res.status(500).json({ message: "Failed to add user" });
+    return handleError(res, error, "addUser controller");
   }
 };
 
@@ -37,8 +40,7 @@ export const getAllUsers = async (req, res) => {
     const users = await userModel.getAllUsers({ name, email, address, role });
     res.json(users);
   } catch (error) {
-    console.error("Error in getAllusers Conroller:", error);
-    res.status(500).json({ message: "Failed to fetch users" });
+    return handleError(res, error, "getAllUsers controller");
   }
 };
 
@@ -47,11 +49,10 @@ export const getUserDetails = async (req, res) => {
     const { id } = req.params;
     const user = await userModel.getUserDetails(id);
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) return handleNotFoundError(res, "User not found");
 
     res.json(user);
   } catch (error) {
-    console.error("Error fetching user controller:", error);
-    res.status(500).json({ message: "Failed to fetch user details" });
+    return handleError(res, error, "getUserDetails controller");
   }
 };
