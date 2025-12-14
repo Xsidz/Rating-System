@@ -1,10 +1,9 @@
 import { getPool } from "../utils/initDB.js";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "../utils/passwordUtils.js";
 
 export const addUser = async (name, email, password, address, role) => {
   const pool = getPool();
-  const salt = await bcrypt.genSalt(10);
-  const hashPass = await bcrypt.hash(password, salt);
+  const hashPass = await hashPassword(password);
 
   const [result] = await pool.query(
     `INSERT INTO users (name,email,password,address,role) VALUES(?,?,?,?,?)`,

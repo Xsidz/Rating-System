@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
+import { handleStoreError } from '../utils/storeHelpers.js';
 
 // Auth store for managing authentication state
 const useAuthStore = create((set) => ({
@@ -20,10 +21,10 @@ const useAuthStore = create((set) => ({
         loading: false,
         error: null
       });
-      console.log(user)
+      console.log(user);
       return user;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      const errorMessage = handleStoreError(error, 'Login failed');
       set({
         user: null,
         isAuthenticated: false,
@@ -67,7 +68,7 @@ const useAuthStore = create((set) => ({
       set({ loading: false, error: null });
       return true;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Password update failed';
+      const errorMessage = handleStoreError(error, 'Password update failed');
       set({ loading: false, error: errorMessage });
       throw error;
     }
@@ -111,7 +112,7 @@ const useAuthStore = create((set) => ({
       });
       return user;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Signup failed';
+      const errorMessage = handleStoreError(error, 'Signup failed');
       set({
         user: null,
         isAuthenticated: false,
